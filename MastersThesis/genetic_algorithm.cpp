@@ -1,6 +1,6 @@
 #include "genetic_algorithm.h"
 
-CGeneticAlgorithm::CGeneticAlgorithm() : m_rand(0, 99)
+CGeneticAlgorithm::CGeneticAlgorithm()
 {
    m_rand.UseNewNumbers();
 }
@@ -21,8 +21,7 @@ size_t CGeneticAlgorithm::AddCondition()
       else
          throw std::string("Обнаружена новая переменная, при уже сформированном векторе переменных.");
 
-   TPartCond part(m_vVariables.size(), false);
-   m_vSpecified.push_back(std::make_pair(part, part));
+   m_vSpecified.push_back(TCond(m_vVariables.size(), 0));
    return m_vSpecified.size() - 1;
 }
 
@@ -36,21 +35,19 @@ EAddingError CGeneticAlgorithm::AddVariableLeftSideCondition(size_t IndexConditi
       return eInvalidIndex;
 
    TCond& cond = m_vSpecified[IndexCondition_];
-   TPartCond& leftPart = cond.first;
-   const TPartCond& rightPart = cond.second;
 
-   size_t idx = itVar->second;
-
-   if (idx >= leftPart.size() || idx >= rightPart.size())
+   if (itVar->second >= cond.size())
       return eInvalidIndex;
 
-   if (leftPart[idx] == true)
+   char& var = cond[itVar->second];
+
+   if (var == 1)
       return VariablePresent;
 
-   if (rightPart[idx] == true)
+   if (var == 2)
       return OppositeCondition;
 
-   leftPart[idx] = true;
+   var = 1;
 
    return eSuccessfully;
 }
@@ -65,21 +62,19 @@ EAddingError CGeneticAlgorithm::AddVariableRightSideCondition(size_t IndexCondit
       return eInvalidIndex;
 
    TCond& cond = m_vSpecified[IndexCondition_];
-   const TPartCond& leftPart = cond.first;
-   TPartCond& rightPart = cond.second;
 
-   size_t idx = itVar->second;
-
-   if (idx >= leftPart.size() || idx >= rightPart.size())
+   if (itVar->second >= cond.size())
       return eInvalidIndex;
 
-   if (rightPart[idx] == true)
+   char& var = cond[itVar->second];
+
+   if (var == 2)
       return VariablePresent;
 
-   if (leftPart[idx] == true)
+   if (var == 1)
       return OppositeCondition;
 
-   rightPart[idx] = true;
+   var = 2;
 
    return eSuccessfully;
 }
@@ -465,6 +460,7 @@ void CGeneticAlgorithm::Clear()
    m_mapVariables.clear();
    m_vVariables.clear();
    m_vSpecified.clear();
+   m_vGenerations.clear();
 }
 
 void CGeneticAlgorithm::InitVectVar()
@@ -550,11 +546,10 @@ bool CGeneticAlgorithm::WriteСondsInStream(std::ostream& Stream_, std::string& S
             else
                Stream_ << std::endl;
 
-            const TPartCond& left = cond.first;
             bool isFirst = true;
-            for (int i = 0; i < left.size(); ++i)
+            for (int i = 0; i < cond.size(); ++i)
             {
-               if (left[i])
+               if (cond[i] == 1)
                   if (isFirst)
                   {
                      Stream_ << m_vVariables[i].name;
@@ -566,11 +561,10 @@ bool CGeneticAlgorithm::WriteСondsInStream(std::ostream& Stream_, std::string& S
 
             Stream_ << " -> ";
 
-            const TPartCond& right = cond.second;
             isFirst = true;
-            for (int i = 0; i < right.size(); ++i)
+            for (int i = 0; i < cond.size(); ++i)
             {
-               if (right[i])
+               if (cond[i] == 2)
                   if (isFirst)
                   {
                      Stream_ << m_vVariables[i].name;
@@ -601,10 +595,14 @@ void CGeneticAlgorithm::CreateFirstGenerationRandom(size_t Count_)
    if (Count_ < 2)
       throw ErrorMessage("Количество особей должно быть больше 1");
 
+   if (m_vVariables.size() < 2)
+      throw ErrorMessage("Количество переменных должно быть больше 1");
+
    const size_t sizeCond = m_vSpecified.size();
    const size_t sizeVar = m_vVariables.size();
 
    m_vGenerations.clear();
+   m_rand.SetBoundaries(0, 2);
 
    for (size_t iGen = 0; iGen < Count_; ++iGen)
    {
@@ -612,18 +610,37 @@ void CGeneticAlgorithm::CreateFirstGenerationRandom(size_t Count_)
 
       for (size_t iCond = 0; iCond < sizeCond; ++iCond)
       {
-         TPartCond left(sizeVar);
-         TPartCond right(sizeVar);
+         TCond cond(sizeVar);
 
-         for (size_t iVar = 0; iVar < sizeVar; ++iVar)
+         do
          {
-            left[iVar] = static_cast<bool>(m_rand.Generate() / 50);
-            right[iVar] = static_cast<bool>(m_rand.Generate() / 50);
-         }
+            for (size_t iVar = 0; iVar < sizeVar; ++iVar)
+            {
+               cond[iVar] = static_cast<char>(m_rand.Generate());
+            }
+         } while (!IsCorrectCondition(cond));
 
-         conds[iCond] = std::make_pair(left, right);
+         conds[iCond] = cond;
       }
 
       m_vGenerations.push_back(conds);
    }
+}
+
+bool CGeneticAlgorithm::IsCorrectCondition(const TCond& Cond_)
+{
+   bool haveLeft = false;
+   bool haveRight = false;
+   for (const auto& var : Cond_)
+   {
+      if (var == 1)
+         haveLeft = true;
+      else if (var == 2)
+         haveRight = true;
+
+      if (haveLeft && haveRight)
+         return true;
+   }
+
+   return haveLeft && haveRight;
 }

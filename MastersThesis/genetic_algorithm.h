@@ -30,8 +30,7 @@ enum EAddingError
 
 class CGeneticAlgorithm
 {
-   using TPartCond = std::vector<bool>;
-   using TCond = std::pair<TPartCond, TPartCond>;
+   using TCond = std::vector<char>; // 0 - не использ., 1 - лево, 2 - право
    using TСondIntegrity = std::vector<TCond>;
 
 public:
@@ -68,13 +67,14 @@ protected:
 
 public:
    void CreateFirstGenerationRandom(size_t Count_);
+   bool IsCorrectCondition(const TCond& Cond_);
 
 private:
    std::map<SPropVar, size_t> m_mapVariables;
    std::vector<SPropVar> m_vVariables;
 
    /// состояния: firs - левая часть (до импликации), second - правая часть
-   TСondIntegrity m_vSpecified; // заданное условие целостности (для финтес ф-ции)
+   TСondIntegrity m_vSpecified; // условие целостности (для финтес ф-ции)
 
    std::vector<TСondIntegrity> m_vGenerations;
 
