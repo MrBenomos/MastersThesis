@@ -68,6 +68,8 @@ protected:
 public:
    void CreateFirstGenerationRandom(size_t Count_);
    bool IsCorrectCondition(const TCond& Cond_);
+   bool IsTrueCondition(const TCond& Cond_);
+   double FitnessFunction(const TÑondIntegrity& Conds_);
 
 private:
    std::map<SPropVar, size_t> m_mapVariables;

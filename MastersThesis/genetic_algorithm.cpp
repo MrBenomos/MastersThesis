@@ -644,3 +644,65 @@ bool CGeneticAlgorithm::IsCorrectCondition(const TCond& Cond_)
 
    return haveLeft && haveRight;
 }
+
+bool CGeneticAlgorithm::IsTrueCondition(const TCond& Cond_)
+{
+   for (int i = 0; i < Cond_.size(); ++i)
+   {
+      if (Cond_[i] == 1 && !m_vVariables[i].value)
+         return true;
+      else if (Cond_[i] == 2 && m_vVariables[i].value)
+         return true;
+   }
+
+   return false;
+}
+
+double CGeneticAlgorithm::FitnessFunction(const TÑondIntegrity& Conds_)
+{
+   size_t countVar = m_vVariables.size();
+
+   double fitness = 0;
+   const double maxCondition = 1. / Conds_.size();
+
+   for (int iCond = 0; iCond < Conds_.size(); ++iCond)
+   {
+      const TCond& cond = Conds_[iCond];
+      if (!IsCorrectCondition(cond))
+         continue;
+
+      // Ñ÷èòàåì ñêîëüêî îòëè÷èé
+      size_t n = 0;
+      for (int iVar = 0; iVar < cond.size(); ++iVar)
+      {
+         switch (cond[iVar])
+         {
+         case 0:
+            if (m_vSpecified[iCond][iVar] != 0)
+               ++n;
+            break;
+         case 1:
+            if (m_vSpecified[iCond][iVar] == 0)
+               ++n;
+            else if (m_vSpecified[iCond][iVar] == 2)
+               n += 2;
+            break;
+         case 2:
+            if (m_vSpecified[iCond][iVar] == 0)
+               ++n;
+            else if (m_vSpecified[iCond][iVar] == 1)
+               n += 2;
+            break;
+         default:
+            throw;
+         }
+      }
+
+      if (!IsTrueCondition(cond))
+         fitness += maxCondition / (((countVar + 1) * 2) + n);
+      else
+         fitness += maxCondition / (n + 1);
+   }
+
+   return fitness;
+}
