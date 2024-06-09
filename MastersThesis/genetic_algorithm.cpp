@@ -1,5 +1,9 @@
 #include "genetic_algorithm.h"
-#include <fstream>
+
+CGeneticAlgorithm::CGeneticAlgorithm() : m_rand(0, 99)
+{
+   m_rand.UseNewNumbers();
+}
 
 bool CGeneticAlgorithm::AddVariable(const SPropVar& Variable_)
 {
@@ -18,8 +22,8 @@ size_t CGeneticAlgorithm::AddCondition()
          throw std::string("Обнаружена новая переменная, при уже сформированном векторе переменных.");
 
    TPartCond part(m_vVariables.size(), false);
-   m_vConditions.push_back(std::make_pair(part, part));
-   return m_vConditions.size() - 1;
+   m_vSpecified.push_back(std::make_pair(part, part));
+   return m_vSpecified.size() - 1;
 }
 
 EAddingError CGeneticAlgorithm::AddVariableLeftSideCondition(size_t IndexCondition_, std::string Name_)
@@ -28,10 +32,10 @@ EAddingError CGeneticAlgorithm::AddVariableLeftSideCondition(size_t IndexConditi
    if (itVar == m_mapVariables.end())
       return eUnknownVariable;
 
-   if (IndexCondition_ >= m_vConditions.size())
+   if (IndexCondition_ >= m_vSpecified.size())
       return eInvalidIndex;
 
-   TCond& cond = m_vConditions[IndexCondition_];
+   TCond& cond = m_vSpecified[IndexCondition_];
    TPartCond& leftPart = cond.first;
    const TPartCond& rightPart = cond.second;
 
@@ -57,10 +61,10 @@ EAddingError CGeneticAlgorithm::AddVariableRightSideCondition(size_t IndexCondit
    if (itVar == m_mapVariables.end())
       return eUnknownVariable;
 
-   if (IndexCondition_ >= m_vConditions.size())
+   if (IndexCondition_ >= m_vSpecified.size())
       return eInvalidIndex;
 
-   TCond& cond = m_vConditions[IndexCondition_];
+   TCond& cond = m_vSpecified[IndexCondition_];
    const TPartCond& leftPart = cond.first;
    TPartCond& rightPart = cond.second;
 
@@ -205,7 +209,7 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
          {
             StrError_ = ErrorMessage("Отсутствует правая часть условия.", Str_);
             if (idx != std::string::npos)
-               m_vConditions.erase(m_vConditions.begin() + idx);
+               m_vSpecified.erase(m_vSpecified.begin() + idx);
             return false;
          }
          else
@@ -216,7 +220,7 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
       {
          StrError_ = ErrorMessage("Имя переменной может начинаться только с латинской буквы.", Str_, i);
          if (idx != std::string::npos)
-            m_vConditions.erase(m_vConditions.begin() + idx);
+            m_vSpecified.erase(m_vSpecified.begin() + idx);
          return false;
       }
 
@@ -257,24 +261,24 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
       case eUnknownVariable:
          StrError_ = ErrorMessage("Неинициализированная переменная \'" + name + "\'.", Str_);
          if (idx != std::string::npos)
-            m_vConditions.erase(m_vConditions.begin() + idx);
+            m_vSpecified.erase(m_vSpecified.begin() + idx);
          return false;
       case VariablePresent:
          break;
       case OppositeCondition:
          StrError_ = ErrorMessage("Переменная \'" + name + "\' уже использовалась в другой части этого условия.", Str_);
          if (idx != std::string::npos)
-            m_vConditions.erase(m_vConditions.begin() + idx);
+            m_vSpecified.erase(m_vSpecified.begin() + idx);
          return false;
       case eInvalidIndex:
          StrError_ = ErrorMessage("Обратитесь к разработчику (ошибка индексации, при создании условия).", Str_);
          if (idx != std::string::npos)
-            m_vConditions.erase(m_vConditions.begin() + idx);
+            m_vSpecified.erase(m_vSpecified.begin() + idx);
          return false;
       default:
          StrError_ = ErrorMessage("Неизвестная ошибка.", Str_);
          if (idx != std::string::npos)
-            m_vConditions.erase(m_vConditions.begin() + idx);
+            m_vSpecified.erase(m_vSpecified.begin() + idx);
          return false;
       }
 
@@ -288,7 +292,7 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
          {
             StrError_ = ErrorMessage("Отсутствует правая часть условия.", Str_);
             if (idx != std::string::npos)
-               m_vConditions.erase(m_vConditions.begin() + idx);
+               m_vSpecified.erase(m_vSpecified.begin() + idx);
             return false;
          }
          else
@@ -302,6 +306,14 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
 
       if (Str_.at(i) == '-')
       {
+         if (!isLeftPart)
+         {
+            StrError_ = ErrorMessage("В строке может быть только одно условие", Str_, i);
+            if (idx != std::string::npos)
+               m_vSpecified.erase(m_vSpecified.begin() + idx);
+            return false;
+         }
+
          ++i;
          if (i < length)
             if (Str_.at(i) == '>')
@@ -315,14 +327,14 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
             {
                StrError_ = ErrorMessage("Ожидалось \'>\'.", Str_, i);
                if (idx != std::string::npos)
-                  m_vConditions.erase(m_vConditions.begin() + idx);
+                  m_vSpecified.erase(m_vSpecified.begin() + idx);
                return false;
             }
          else
          {
             StrError_ = ErrorMessage("Отсутствует правая часть условия.", Str_);
             if (idx != std::string::npos)
-               m_vConditions.erase(m_vConditions.begin() + idx);
+               m_vSpecified.erase(m_vSpecified.begin() + idx);
             return false;
          }
       }
@@ -333,7 +345,7 @@ bool CGeneticAlgorithm::GetConditionFromString(const std::string& Str_, std::str
    {
       StrError_ = ErrorMessage("Отсутствует правая часть условия.", Str_);
       if (idx != std::string::npos)
-         m_vConditions.erase(m_vConditions.begin() + idx);
+         m_vSpecified.erase(m_vSpecified.begin() + idx);
       return false;
    }
 
@@ -400,7 +412,7 @@ bool CGeneticAlgorithm::FillDataInFile(const std::string& FileName_, std::string
    return true;
 }
 
-bool CGeneticAlgorithm::WriteDataInFile(const std::string& FileName_, std::string& StrError_) const
+bool CGeneticAlgorithm::WriteСonditionIntegrityInFile(const std::string& FileName_, std::string& StrError_) const
 {
    std::ofstream fileStream(FileName_);
 
@@ -410,51 +422,38 @@ bool CGeneticAlgorithm::WriteDataInFile(const std::string& FileName_, std::strin
       return false;
    }
 
-   if (!m_vVariables.empty())
+   if (!WriteVarsInStream(fileStream, StrError_))
+      return false;
+
+   fileStream << "\n$\n";
+
+   return WriteСondsInStream(fileStream, StrError_, m_vSpecified);
+}
+
+bool CGeneticAlgorithm::WriteGenerationsInFile(const std::string& FileName_, std::string& StrError_) const
+{
+   std::ofstream fileStream(FileName_);
+
+   if (!fileStream.is_open())
    {
-      fileStream << m_vVariables[0].name << " = " << m_vVariables[0].value ? '1' : '0';
+      StrError_ = "Не удалось открыть файл: " + FileName_;
+      return false;
+   }
 
-      for (int i = 1; i < m_mapVariables.size(); ++i)
-         fileStream << ", " << m_vVariables[i].name << " = " << m_vVariables[i].value ? '1' : '0';
+   // Переменные
+   if (!WriteVarsInStream(fileStream, StrError_))
+      return false;
 
-      if (!m_vConditions.empty())
+   fileStream << std::endl << '$';
+
+   const size_t sizeGen = m_vGenerations.size();
+   for (int i = 0; i < sizeGen; ++i)
+   {
+      fileStream << std::endl << "# " << std::to_string(i) << std::endl;
+      if (!WriteСondsInStream(fileStream, StrError_, m_vGenerations[i]))
       {
-         fileStream << std::endl << '$';
-         
-         for (const auto& cond : m_vConditions)
-         {
-            fileStream << std::endl;
-
-            const TPartCond& left = cond.first;
-            bool isFirst = true;
-            for (int i = 0; i < left.size(); ++i)
-            {
-               if (left[i])
-                  if (isFirst)
-                  {
-                     fileStream << m_vVariables[i].name;
-                     isFirst = false;
-                  }
-                  else
-                     fileStream << ", " << m_vVariables[i].name;
-            }
-
-            fileStream << " -> ";
-
-            const TPartCond& right = cond.second;
-            isFirst = true;
-            for (int i = 0; i < right.size(); ++i)
-            {
-               if (right[i])
-                  if (isFirst)
-                  {
-                     fileStream << m_vVariables[i].name;
-                     isFirst = false;
-                  }
-                  else
-                     fileStream << ", " << m_vVariables[i].name;
-            }
-         }
+         StrError_ += "\nОбъект " + std::to_string(i) + " из " + std::to_string(sizeGen);
+         return false;
       }
    }
 
@@ -465,7 +464,7 @@ void CGeneticAlgorithm::Clear()
 {
    m_mapVariables.clear();
    m_vVariables.clear();
-   m_vConditions.clear();
+   m_vSpecified.clear();
 }
 
 void CGeneticAlgorithm::InitVectVar()
@@ -516,4 +515,115 @@ std::string CGeneticAlgorithm::ErrorMessage(const std::string& Message_, const s
    }
 
    return strError;
+}
+
+bool CGeneticAlgorithm::WriteVarsInStream(std::ostream& Stream_, std::string& StrError_) const
+{
+   if (!m_vVariables.empty())
+   {
+      Stream_ << m_vVariables[0].name << " = " << m_vVariables[0].value ? '1' : '0';
+
+      for (int i = 1; i < m_mapVariables.size(); ++i)
+         Stream_ << ", " << m_vVariables[i].name << " = " << m_vVariables[i].value ? '1' : '0';
+   }
+   else
+   {
+      StrError_ = ErrorMessage("Нет переменных.");
+      return false;
+   }
+
+   return true;
+}
+
+bool CGeneticAlgorithm::WriteСondsInStream(std::ostream& Stream_, std::string& StrError_, const TСondIntegrity& Conds_) const
+{
+   if (!m_vVariables.empty())
+   {
+      if (!Conds_.empty())
+      {
+         bool isFirst = true;
+
+         for (const auto& cond : Conds_)
+         {
+            if (isFirst)
+               isFirst = false;
+            else
+               Stream_ << std::endl;
+
+            const TPartCond& left = cond.first;
+            bool isFirst = true;
+            for (int i = 0; i < left.size(); ++i)
+            {
+               if (left[i])
+                  if (isFirst)
+                  {
+                     Stream_ << m_vVariables[i].name;
+                     isFirst = false;
+                  }
+                  else
+                     Stream_ << ", " << m_vVariables[i].name;
+            }
+
+            Stream_ << " -> ";
+
+            const TPartCond& right = cond.second;
+            isFirst = true;
+            for (int i = 0; i < right.size(); ++i)
+            {
+               if (right[i])
+                  if (isFirst)
+                  {
+                     Stream_ << m_vVariables[i].name;
+                     isFirst = false;
+                  }
+                  else
+                     Stream_ << ", " << m_vVariables[i].name;
+            }
+         }
+      }
+      else
+      {
+         StrError_ = ErrorMessage("Нет условий.");
+         return false;
+      }
+   }
+   else
+   {
+      StrError_ = ErrorMessage("Нет переменных.");
+      return false;
+   }
+
+   return true;
+}
+
+void CGeneticAlgorithm::CreateFirstGenerationRandom(size_t Count_)
+{
+   if (Count_ < 2)
+      throw ErrorMessage("Количество особей должно быть больше 1");
+
+   const size_t sizeCond = m_vSpecified.size();
+   const size_t sizeVar = m_vVariables.size();
+
+   m_vGenerations.clear();
+
+   for (size_t iGen = 0; iGen < Count_; ++iGen)
+   {
+      TСondIntegrity conds(sizeCond);
+
+      for (size_t iCond = 0; iCond < sizeCond; ++iCond)
+      {
+         TPartCond left(sizeVar);
+         TPartCond right(sizeVar);
+
+         for (size_t iVar = 0; iVar < sizeVar; ++iVar)
+         {
+            left[iVar] = static_cast<bool>(m_rand.Generate() / 50);
+            right[iVar] = static_cast<bool>(m_rand.Generate() / 50);
+         }
+
+         conds[iCond] = std::make_pair(left, right);
+      }
+
+      m_vGenerations.push_back(conds);
+   }
 }

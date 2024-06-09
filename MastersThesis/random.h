@@ -27,20 +27,20 @@ private:
 // ======================================== Методы ========================================
 
 
-CRandom::CRandom(int start, int end) : m_start(start), m_end(end)
+inline CRandom::CRandom(int start, int end) : m_start(start), m_end(end)
 {
    if (!IsCorrect())
       throw;
 }
 
 
-int CRandom::Generate()
+inline int CRandom::Generate()
 {
    return rand() % (m_end - m_start + 1) + m_start;
 }
 
 
-void CRandom::SetBoundaries(int start, int end)
+inline void CRandom::SetBoundaries(int start, int end)
 {
    m_start = start;
    m_end = end;
@@ -50,19 +50,19 @@ void CRandom::SetBoundaries(int start, int end)
 }
 
 
-void CRandom::SetSeed(unsigned int seed)
+inline void CRandom::SetSeed(unsigned int seed)
 {
    srand(seed);
 }
 
 
-void CRandom::UseNewNumbers()
+inline void CRandom::UseNewNumbers()
 {
    srand(static_cast<unsigned int>(time(nullptr)));
 }
 
 
-bool CRandom::IsCorrect()
+inline bool CRandom::IsCorrect()
 {
    if (m_start > m_end)
       std::swap(m_start, m_end);

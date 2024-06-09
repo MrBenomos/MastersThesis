@@ -2,6 +2,9 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
+
+#include "random.h"
 
 // Пропозициональная переменная (PropositionalVariable) 
 struct SPropVar
@@ -27,8 +30,12 @@ enum EAddingError
 
 class CGeneticAlgorithm
 {
+   using TPartCond = std::vector<bool>;
+   using TCond = std::pair<TPartCond, TPartCond>;
+   using TСondIntegrity = std::vector<TCond>;
+
 public:
-   CGeneticAlgorithm() = default;
+   CGeneticAlgorithm();
    ~CGeneticAlgorithm() = default;
 
    // Добавляет пропозициональную переменную, возвращает true если успешно добавлено, false иначе
@@ -45,22 +52,31 @@ public:
    bool GetConditionFromString(const std::string& Str_, std::string& StrError_);
    // Получает данные из файла, возвращает признак успешности заполнения данных
    bool FillDataInFile(const std::string& FileName_, std::string& StrError_);
-   // Записывает данные в файл
-   bool WriteDataInFile(const std::string& FileName_, std::string& StrError_) const;
+   // Записывает ограничение целостности (исходное) в файл
+   bool WriteСonditionIntegrityInFile(const std::string& FileName_, std::string& StrError_) const;
+   // Записывает все текущие поколения в файл
+   bool WriteGenerationsInFile(const std::string& FileName_, std::string& StrError_) const;
 
    void Clear();
-private:
+protected:
    void InitVectVar();
    bool IllegalSymbol(char Symbol_) const;
    std::string ErrorMessage(const std::string& Message_ = "", const std::string& Line_ = "", size_t Position_ = std::string::npos) const;
+
+   bool WriteVarsInStream(std::ostream& Stream_, std::string& StrError_) const;
+   bool WriteСondsInStream(std::ostream& Stream_, std::string& StrError_, const TСondIntegrity& Conds_) const;
+
+public:
+   void CreateFirstGenerationRandom(size_t Count_);
 
 private:
    std::map<SPropVar, size_t> m_mapVariables;
    std::vector<SPropVar> m_vVariables;
 
-   using TPartCond = std::vector<bool>;
-   using TCond = std::pair<TPartCond, TPartCond>;
-
    /// состояния: firs - левая часть (до импликации), second - правая часть
-   std::vector<TCond> m_vConditions;
+   TСondIntegrity m_vSpecified; // заданное условие целостности (для финтес ф-ции)
+
+   std::vector<TСondIntegrity> m_vGenerations;
+
+   CRandom m_rand;
 };
