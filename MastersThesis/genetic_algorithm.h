@@ -56,6 +56,8 @@ public:
    // Çàïèñûâàåò âñå òåêóùèå ïîêîëåíèÿ â ôàéë
    bool WriteGenerationsInFile(const std::string& FileName_, std::string& StrError_) const;
 
+   void Start(unsigned int CountIndividuals_, size_t CountIterations_, bool UseMutation = false, unsigned int Percent_ = 0);
+
    void Clear();
 protected:
    void InitVectVar();
@@ -65,11 +67,17 @@ protected:
    bool WriteVarsInStream(std::ostream& Stream_, std::string& StrError_) const;
    bool WriteÑondsInStream(std::ostream& Stream_, std::string& StrError_, const TÑondIntegrity& Conds_) const;
 
-public:
+
    void CreateFirstGenerationRandom(size_t Count_);
-   bool IsCorrectCondition(const TCond& Cond_);
-   bool IsTrueCondition(const TCond& Cond_);
-   double FitnessFunction(const TÑondIntegrity& Conds_);
+   TÑondIntegrity CrossingByGenes(const TÑondIntegrity& Parent1_, const TÑondIntegrity& Parent2_) const;
+   TÑondIntegrity CrossingByConds(const TÑondIntegrity& Parent1_, const TÑondIntegrity& Parent2_) const;
+   void Selection(const std::vector<TÑondIntegrity>& Individuals_, size_t CountSurvivors_);
+   void Mutation(TÑondIntegrity& Individuals_, double Ratio_) const;
+
+   bool IsCorrectCondition(const TCond& Cond_) const;
+   bool IsTrueCondition(const TCond& Cond_) const;
+   double FitnessFunction(const TÑondIntegrity& Conds_) const;
+   void SortDescendingOrder();
 
 private:
    std::map<SPropVar, size_t> m_mapVariables;
@@ -80,5 +88,5 @@ private:
 
    std::vector<TÑondIntegrity> m_vGenerations;
 
-   CRandom m_rand;
+   mutable CRandom m_rand;
 };

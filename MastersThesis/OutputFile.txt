@@ -1,37 +1,702 @@
 a = 1, b = 1, c = 0, d = 0, e = 1, f = 0
 $
-# 0
-d, e, f -> b, c
-e -> a, b
-d, e -> a, b, c, f
-d, f -> a, b
-a, d -> b, c
-e -> a, b, d
-# 1
-b -> a, e, f
-a, d, f -> c
-a, b, e -> f
-a, f -> b
-a, c -> d, e, f
-d -> b
-# 2
-d, e, f -> a, b, c
-f -> a, c
-a, b -> c, d, f
-b, c, d -> a, f
-f -> b, c
-a, e -> c, f
-# 3
-b -> a, e
-c, d, e, f -> a, b
-b, c, d -> a, f
-a, b, c, e -> f
+# 0	 = 0.666667
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+a, d -> c
+b, d, e -> a, f
+# 1	 = 0.662698
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+c, e -> b
 b, e -> a, f
-c, d, f -> a
-# 4
-a, e, f -> b, c, d
-a, c -> b, d, e
-f -> c, e
-d -> a, b, e
-a, b, c, d -> e
+# 2	 = 0.652778
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b, e -> a, d, f
+b, e, f -> a, c, d
+b, c, e -> f
+# 3	 = 0.644444
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+a, c -> b
+e -> a, f
+# 4	 = 0.638889
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, d
+a -> b, d
+a, b, d, e -> f
+# 5	 = 0.638889
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e, f -> c, d
+e, f -> b, c
+b, d, e -> a, f
+# 6	 = 0.6375
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> a, b, c
+a, e -> b, c, f
+b, c, e -> f
+# 7	 = 0.6375
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+f -> b, c
+a, e -> b, c, f
+b, c, e -> f
+# 8	 = 0.634921
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, d, e, f -> b, c
+f -> a, b, d
+b, e -> a, f
+# 9	 = 0.634921
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> a, c
+a, e, f -> c, d
+b, c, e -> d, f
+# 10	 = 0.630556
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+a, d -> c, f
+a, d, e -> b, f
+# 11	 = 0.630556
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e, f -> c
+e -> b, c
+b, c, d, e -> f
+# 12	 = 0.625
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b, e, f -> a, c
+a -> b, d, f
+b, e -> a, d, f
+# 13	 = 0.625
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e, f -> d
+e -> b
+d, e -> f
+# 14	 = 0.622222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, d, e -> b, c, f
+a -> b, c, d, e
+d, e -> a, c, f
+# 15	 = 0.622222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> a, c, f
+a, d, f -> c, e
+b, e -> a, d, f
+# 16	 = 0.61756
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> b, d
+a -> c, f
+b, c, e -> f
+# 17	 = 0.616667
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> b, c, d, e, f
+d, e, f -> c
+b, d, e -> a, f
+# 18	 = 0.616667
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> a, c, f
+ -> c, e, f
+b, e -> a, f
+# 19	 = 0.616667
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e -> b, f
+a, e, f -> b, c
+b, d, e -> a, f
+# 20	 = 0.616667
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, f
+c -> 
+b, d, e -> f
+# 21	 = 0.614583
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, f -> b, c, e
+a, e -> d
+b, d, e -> f
+# 22	 = 0.611111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> b, f
+ -> c
+b, d, e -> f
+# 23	 = 0.611111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> a, f
+a, c -> d, e
+b, e -> a, c, d, f
+# 24	 = 0.611111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> a, c, d, f
+f -> b, c, e
+b, e -> a, c, d, f
+# 25	 = 0.609722
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c -> b
+a, c -> f
+b, d, e -> c, f
+# 26	 = 0.608333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, c, e -> f
+a, d -> b, c, f
+d, e -> a, c, f
+# 27	 = 0.608333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, d, e -> b, c, f
+a, c, e -> b, d
+d, e -> a, f
+# 28	 = 0.607407
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, f -> c, d, e
+c, d, e, f -> b
+b, d, e -> a, f
+# 29	 = 0.607143
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, d, e, f -> b, c
+a, c, e -> b, d, f
+e -> a, f
+# 30	 = 0.607143
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, f
+c -> b, f
+b, c, d, e -> a, f
+# 31	 = 0.607143
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, f -> c, d
+c, e -> f
+d, e -> a, f
+# 32	 = 0.604167
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b
+d -> b, c, f
+b, d, e -> a, f
+# 33	 = 0.604167
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> a, b, c
+a, d, e -> c
+a, b, c, d, e -> f
+# 34	 = 0.602778
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e -> b, f
+a, d -> b, c, f
+b, c, d, e -> a, f
+# 35	 = 0.602778
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e, f -> c
+a -> b, f
+e -> a, b, d
+# 36	 = 0.601852
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, f -> b
+b, e, f -> c
+b, c, d, e -> f
+# 37	 = 0.59881
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> a, b, c
+a, f -> b, c
+b, c, e -> a, d
+# 38	 = 0.59881
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d
+c -> a, f
+c, d, e -> a, f
+# 39	 = 0.597222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, c, e, f -> 
+a -> b, c
+c, d, e -> f
+# 40	 = 0.597222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, f
+e -> 
+d, e -> f
+# 41	 = 0.597222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b, c, e -> a, f
+a, b, d -> f
+b, c, d, e -> a, f
+# 42	 = 0.597222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, f
+ -> a, b, c, f
+b, d, e -> a, f
+# 43	 = 0.597222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, c
+a, c, d -> b
+d, e -> a, f
+# 44	 = 0.595833
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b
+a, d, e -> b, c
+b, d, e -> a, c, f
+# 45	 = 0.594444
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e -> b, f
+a, d, f -> b, c
+b, c, d, e -> a
+# 46	 = 0.593254
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, d -> b, f
+c -> b
+a, b, d, e -> c, f
+# 47	 = 0.593254
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+f -> d
+f -> a, d, e
+b, d, e -> a
+# 48	 = 0.593137
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e -> b, f
+a, e -> c, f
+b, d, e -> a, f
+# 49	 = 0.590278
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> a, b, c
+a, d, e -> b, c, f
+b, c, d, e -> a, f
+# 50	 = 0.588889
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> b, d, f
+a, c, d -> 
+b, d, e -> c, f
+# 51	 = 0.588889
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, c
+e -> b, c
+c, e -> a, b, d, f
+# 52	 = 0.588889
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, c, e, f -> d
+a, c -> 
+d, e -> f
+# 53	 = 0.5875
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, f -> b, d
+a, c, e -> b, d
+e -> a, c
+# 54	 = 0.5875
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b
+a, e -> b, c, f
+b, d, e -> a, c
+# 55	 = 0.58631
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b
+a, c, d -> b, f
+b, d, e -> a, c, f
+# 56	 = 0.586111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e -> c, f
+a, d -> b, c
+b, d, e -> a, c
+# 57	 = 0.586111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e -> c, f
+a, f -> b, c, d, e
+d, e -> c
+# 58	 = 0.586111
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e -> c, f
+a, e, f -> d
+c, d, e -> b, f
+# 59	 = 0.584921
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, f -> b, d
+e -> b, c, f
+e -> a, b, d, f
+# 60	 = 0.583995
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c -> b, e
+a, c, e -> b, f
+b, e -> a, c
+# 61	 = 0.583333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b -> a, c, e, f
+c, e, f -> 
+b, c, d, e -> f
+# 62	 = 0.583333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b, e, f -> a, c
+ -> b
+d, e -> f
+# 63	 = 0.583333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+ -> a, b, c
+b, c, d, e, f -> a
+# 64	 = 0.583333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, c, d, f
+a, c, d -> 
+a, d, e -> b
+# 65	 = 0.582143
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+c, f -> b
+b, d, e -> c, f
+e -> a, b, f
+# 66	 = 0.581349
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e -> c, d, f
+a, c, d -> f
+b, c, d, e -> a, f
+# 67	 = 0.580952
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> b
+b, d, e -> c, f
+b, d, e -> a, c
+# 68	 = 0.580952
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b, d
+c, e -> b
+d, e -> a, c, f
+# 69	 = 0.57963
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+f -> a, b, c
+f -> b
+a, e -> b, d, f
+# 70	 = 0.579365
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, e, f -> b, d
+e -> b
+e -> a, b, c, d, f
+# 71	 = 0.579248
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b -> f
+a, d -> b, f
+d, e -> b, f
+# 72	 = 0.579248
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> d, f
+a, d -> b, c
+d, e -> a, b
+# 73	 = 0.578704
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, f -> b
+c, e -> a, b, f
+e -> a, c, f
+# 74	 = 0.575
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+ -> a, b, f
+a -> b, c, f
+e -> a, b, d, f
+# 75	 = 0.575
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
 e -> b, d, f
+a, d, e -> 
+b, d, e -> a
+# 76	 = 0.575
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e, f -> c
+ -> b, c, d
+d, e -> a, b, f
+# 77	 = 0.575
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, f
+ -> 
+e -> a, d, f
+# 78	 = 0.572222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, e -> d, f
+d -> a, c, f
+d, e -> a
+# 79	 = 0.569444
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e, f
+a, b, e, f -> c, d
+a -> b, d
+d, e -> a, f
+# 80	 = 0.5625
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, b, c, e, f -> 
+a, d -> b, c
+c, d -> a, e
+# 81	 = 0.5625
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+e, f -> b
+a, b, c, e -> 
+b, d, e -> a, c, f
+# 82	 = 0.555556
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, d
+a, b, d, e -> 
+c, e -> a, b, d, f
+# 83	 = 0.555556
+a, c, e, f -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, c
+a, e, f -> c, d
+b, d, e -> a, f
+# 84	 = 0.555556
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e, f
+a -> b, c, e, f
+e, f -> b, c
+b, d, e -> f
+# 85	 = 0.555556
+a, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+ -> b, f
+a -> c, d, e
+b, d, e -> a, f
+# 86	 = 0.551587
+a, c, e -> b, d
+d, f -> a, b
+b -> a, c, d, e
+a, f -> b, c, d, e
+a, c -> d
+a, b, d, e -> f
+# 87	 = 0.55
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, c, f -> b, e
+ -> a, d, f
+d, e -> a, c, f
+# 88	 = 0.547619
+a, c, e -> b, d, f
+d, f -> a, b, e
+b -> a, c, d, e
+a, f -> b, c
+e, f -> a
+b, d, e -> f
+# 89	 = 0.547222
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e, f
+a, b, e, f -> c
+d -> b, c
+b, c, d, e -> f
+# 90	 = 0.544444
+a, c, e -> b, d
+d, f -> a, b, e
+b, f -> a, c, d, e
+c, f -> b
+e -> b
+b, e -> a, f
+# 91	 = 0.541667
+a, c, e -> b, d, f
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, d
+a, d, e -> c
+b, d, e -> a, f
+# 92	 = 0.537698
+a, e -> b, c, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e -> b, d, f
+d, e -> a
+b, c, e -> f
+# 93	 = 0.537698
+a, c, e, f -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b
+a, c -> b, d
+b, e -> a, c, f
+# 94	 = 0.533333
+a, c, e, f -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a -> b, c, f
+d, e -> 
+b, d, e -> f
+# 95	 = 0.533333
+a, c, e, f -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+a, e, f -> b, d
+e -> b, c
+b, e -> a, c, f
+# 96	 = 0.533333
+a, c, e -> b, d
+d, f -> a, b, e
+b, f -> a, c, d, e
+a, e -> b, d
+d, e -> 
+b, d, e -> f
+# 97	 = 0.533333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, e
+a -> b, f
+a, d -> f
+b, d, e -> a, f
+# 98	 = 0.533333
+a, c, e -> b, d
+d, f -> a, b, e
+b -> a, c, d, e
+b, e, f -> a, c, d
+c, d, e, f -> 
+a, b, d, e -> 
+# 99	 = 0.533333
+a, c, e -> b, d
+d, f -> a, b, e
+b, f -> a, c, d, e
+a, e, f -> b, c, d
+d -> f
+b, d, e -> a, f

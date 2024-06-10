@@ -1,4 +1,5 @@
 #include "genetic_algorithm.h"
+#include <map>
 
 CGeneticAlgorithm::CGeneticAlgorithm()
 {
@@ -444,7 +445,7 @@ bool CGeneticAlgorithm::WriteGenerationsInFile(const std::string& FileName_, std
    const size_t sizeGen = m_vGenerations.size();
    for (int i = 0; i < sizeGen; ++i)
    {
-      fileStream << std::endl << "# " << std::to_string(i) << std::endl;
+      fileStream << std::endl << "# " << std::to_string(i) << "\t = " << FitnessFunction(m_vGenerations[i]) << std::endl;
       if (!WriteСondsInStream(fileStream, StrError_, m_vGenerations[i]))
       {
          StrError_ += "\nОбъект " + std::to_string(i) + " из " + std::to_string(sizeGen);
@@ -453,6 +454,57 @@ bool CGeneticAlgorithm::WriteGenerationsInFile(const std::string& FileName_, std
    }
 
    return true;
+}
+
+void CGeneticAlgorithm::Start(unsigned int CountIndividuals_, size_t CountIterations_, bool UseMutation, unsigned int Percent_)
+{
+   if (UseMutation && Percent_ == 0)
+      UseMutation = false;
+
+   // Создание первого поколения
+   CreateFirstGenerationRandom(CountIndividuals_);
+
+   for (size_t iGeneration = 0; iGeneration < CountIterations_; ++iGeneration)
+   {
+
+      std::vector<TСondIntegrity> children;
+      for (size_t iNewIndiv = 0; iNewIndiv < CountIndividuals_ * 2; ++iNewIndiv)
+      {
+         m_rand.SetBoundaries(0, CountIndividuals_ - 1);
+
+         // Селекция (выбор родителей) (турнирный отбор)
+         size_t idxParent1, idxParent2;
+
+         size_t first = m_rand.Generate();
+         size_t second = m_rand.Generate();
+         while (first == second)
+            second = m_rand.Generate();
+
+         idxParent1 = FitnessFunction(m_vGenerations[first]) > FitnessFunction(m_vGenerations[second]) ? first : second;
+
+         first = m_rand.Generate();
+         second = m_rand.Generate();
+         while (first == second)
+            second = m_rand.Generate();
+
+         idxParent2 = FitnessFunction(m_vGenerations[first]) > FitnessFunction(m_vGenerations[second]) ? first : second;
+
+         // Скрещивание
+         children.push_back(CrossingByGenes(m_vGenerations[idxParent1], m_vGenerations[idxParent2]));
+      }
+
+      // Мутация (отключена для последних итераций)
+      if (UseMutation && iGeneration < CountIterations_ - 1)
+         for (auto& individ : children)
+            Mutation(individ, 0.01 * Percent_);
+
+      // Селекция (полная замена, родителей "убиваем")
+      Selection(children, CountIndividuals_);
+   }
+
+   // Сортируем в порядке убывания
+   SortDescendingOrder();
+
 }
 
 void CGeneticAlgorithm::Clear()
@@ -627,7 +679,81 @@ void CGeneticAlgorithm::CreateFirstGenerationRandom(size_t Count_)
    }
 }
 
-bool CGeneticAlgorithm::IsCorrectCondition(const TCond& Cond_)
+CGeneticAlgorithm::TСondIntegrity CGeneticAlgorithm::CrossingByGenes(const TСondIntegrity& Parent1_, const TСondIntegrity& Parent2_) const
+{
+   if (Parent1_.size() != Parent2_.size())
+      throw ErrorMessage("Разное количество условий целостности у родителей!");
+
+   m_rand.SetBoundaries(1, 2);
+
+   TСondIntegrity child;
+
+   for (size_t iCond = 0; iCond < Parent1_.size(); ++iCond)
+   {
+      TCond cond(m_vVariables.size());
+
+      for (size_t iVar = 0; iVar < m_vVariables.size(); ++iVar)
+         cond[iVar] = m_rand.Generate() == 1 ? Parent1_[iCond][iVar] : Parent2_[iCond][iVar];
+
+      child.push_back(cond);
+   }
+
+   return child;
+}
+
+CGeneticAlgorithm::TСondIntegrity CGeneticAlgorithm::CrossingByConds(const TСondIntegrity& Parent1_, const TСondIntegrity& Parent2_) const
+{
+   if (Parent1_.size() != Parent2_.size())
+      throw ErrorMessage("Разное количество условий целостности у родителей!");
+
+   m_rand.SetBoundaries(1, 2);
+
+   TСondIntegrity child;
+
+   for (size_t iCond = 0; iCond < Parent1_.size(); ++iCond)
+      child.push_back(m_rand.Generate() == 1 ? Parent1_[iCond] : Parent2_[iCond]);
+
+   return child;
+}
+
+void CGeneticAlgorithm::Selection(const std::vector<TСondIntegrity>& Individuals_, size_t CountSurvivors_)
+{
+   if (Individuals_.size() < CountSurvivors_)
+      throw ErrorMessage("Количество выживших не должно быть меньше самих особей");
+
+   std::multimap<double, size_t, std::greater<double>> mapIdx;
+
+   for (size_t iIndiv = 0; iIndiv < Individuals_.size(); ++iIndiv)
+      mapIdx.insert(std::make_pair(FitnessFunction(Individuals_[iIndiv]), iIndiv));
+
+   m_vGenerations.clear();
+
+   auto itIdx = mapIdx.begin();
+
+   for (size_t i = 0; i < CountSurvivors_; ++i)
+      m_vGenerations.push_back(Individuals_[(itIdx++)->second]);
+}
+
+void CGeneticAlgorithm::Mutation(TСondIntegrity& Individual_, double Ratio_) const
+{
+   if (Ratio_ <= 0.)
+      return;
+
+   const size_t countConds = m_vSpecified.size();
+   const size_t countVar = m_vVariables.size();
+   const size_t countMutations = std::max(static_cast<int>(Ratio_ * countConds * countVar), 1);
+
+   for (int i = 0; i < countMutations; ++i)
+   {
+      size_t idxCond = m_rand.Generate(0, (int)countConds-1);
+      size_t idxVar = m_rand.Generate(0, (int)countVar-1);
+      char newVar = m_rand.Generate(0, 2);
+
+      Individual_[idxCond][idxVar] = newVar;
+   }
+}
+
+bool CGeneticAlgorithm::IsCorrectCondition(const TCond& Cond_) const
 {
    bool haveLeft = false;
    bool haveRight = false;
@@ -645,7 +771,7 @@ bool CGeneticAlgorithm::IsCorrectCondition(const TCond& Cond_)
    return haveLeft && haveRight;
 }
 
-bool CGeneticAlgorithm::IsTrueCondition(const TCond& Cond_)
+bool CGeneticAlgorithm::IsTrueCondition(const TCond& Cond_) const
 {
    for (int i = 0; i < Cond_.size(); ++i)
    {
@@ -658,7 +784,7 @@ bool CGeneticAlgorithm::IsTrueCondition(const TCond& Cond_)
    return false;
 }
 
-double CGeneticAlgorithm::FitnessFunction(const TСondIntegrity& Conds_)
+double CGeneticAlgorithm::FitnessFunction(const TСondIntegrity& Conds_) const
 {
    size_t countVar = m_vVariables.size();
 
@@ -705,4 +831,18 @@ double CGeneticAlgorithm::FitnessFunction(const TСondIntegrity& Conds_)
    }
 
    return fitness;
+}
+
+void CGeneticAlgorithm::SortDescendingOrder()
+{
+   std::multimap<double, TСondIntegrity, std::greater<double>> mapIdx;
+
+   for (const auto& individ : m_vGenerations)
+      mapIdx.insert(std::make_pair(FitnessFunction(individ), individ));
+
+   m_vGenerations.clear();
+
+   for (const auto& individ : mapIdx)
+      m_vGenerations.push_back(individ.second);
+
 }

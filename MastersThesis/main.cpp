@@ -10,6 +10,21 @@ inline void GetFileName(std::string& FileName_)
    std::cin >> FileName_;
 }
 
+void showMenu()
+{
+   std::cout << "Меню:" << std::endl;
+   std::cout << "1. Считать данные из файла" << std::endl;
+   std::cout << "2. Запустить алгоритм" << std::endl;
+   std::cout << "3. Записать все полученные поколения в файл" << std::endl;
+   std::cout << "4. Записать сохраненное условие целостности в файл" << std::endl;
+   std::cout << "5. Задать имя файла (путь) для чтения" << std::endl;
+   std::cout << "6. Задать имя файла (путь) для записи" << std::endl;
+   std::cout << "7. Задать параметры для алгоритма" << std::endl;
+   std::cout << "9. Очистить консоль" << std::endl;
+   std::cout << "0. Выход" << std::endl;
+   std::cout << "Выберите пункт: ";
+}
+
 // ============================== Main ==============================
 int main(int argc, const char* argv[])
 {
@@ -17,43 +32,132 @@ int main(int argc, const char* argv[])
    SetConsoleCP(1251);
 
    // Получение имени файла
-   std::string fileName;
+   std::string fileNameInput;
+   std::string fileNameOutput;
 
-   if (argc < 2)
-      GetFileName(fileName);
-   else
-      fileName = argv[1];
+   if (argc > 2)
+   {
+      fileNameInput = argv[1];
+      fileNameOutput = argv[2];
+   }
+   else if (argc > 1)
+      fileNameInput = argv[1];
 
    // Объявление генетического алгоритма
    CGeneticAlgorithm algor;
 
-   // Заполнение данных для алгоритма из файла
    std::string strError;
-   while (!algor.FillDataInFile(fileName, strError))
-   {
-      std::cout << strError << std::endl;
-      GetFileName(fileName);
-   }
+   int choice;
+   bool running = true;
 
-   // Запуск алгоритма
+   unsigned int countIndividuals = 100;
+   unsigned int percent = 0;
+   size_t countIterations = 100;
+   bool useMutation = false;
 
+   // Меню
+   while (running) {
+      showMenu();
+      std::cin >> choice;
 
+      switch (choice)
+      {
+      case 1: // Заполнение данных для алгоритма из файла
 
-   // Вывод результата в файл
-   if (argc < 3)
-   {
-      std::cout << "Сохранение результата. ";
-      GetFileName(fileName);
-   }
-   else
-      fileName = argv[2];
+         if (fileNameInput.empty())
+            GetFileName(fileNameInput);
 
-   algor.CreateFirstGenerationRandom(5);
+         if (!algor.FillDataInFile(fileNameInput, strError))
+            std::cout << strError << std::endl;
+         else
+            std::cout << "Успешно." << std::endl;
 
-   while (!algor.WriteGenerationsInFile(fileName, strError))
-   {
-      std::cout << strError << std::endl;
-      GetFileName(fileName);
+         break;
+
+      case 2: // Запуск алгоритма
+         
+         try
+         {
+            algor.Start(countIndividuals, countIterations, useMutation, percent);
+         }
+         catch (const std::string& strError)
+         {
+            std::cout << strError << std::endl;
+         }
+         break;
+
+      case 3: // Запись поколений в файл
+
+         if (fileNameOutput.empty())
+            GetFileName(fileNameOutput);
+
+         if (!algor.WriteGenerationsInFile(fileNameOutput, strError))
+            std::cout << strError << std::endl;
+         else
+            std::cout << "Успешно." << std::endl;
+
+         break;
+
+      case 4: // Запись сохраненных условий целостности в файл
+
+         if (fileNameOutput.empty())
+            GetFileName(fileNameOutput);
+
+         if (!algor.WriteСonditionIntegrityInFile(fileNameOutput, strError))
+            std::cout << strError << std::endl;
+         else
+            std::cout << "Успешно." << std::endl;
+
+         break;
+
+      case 5: // Считать имя файла для чтения
+
+         GetFileName(fileNameInput);
+
+         break;
+
+      case 6: // Считать имя файла для записи
+
+         GetFileName(fileNameOutput);
+
+         break;
+
+      case 7: // Получение параметров для алгоритма
+
+         std::cout << "Количество особей: ";
+         std::cin >> countIndividuals;
+         std::cout << "Количество итераций: ";
+         std::cin >> countIterations;
+         std::cout << "Использовать мутации (0 - нет, 1 - да): ";
+         std::cin >> useMutation;
+
+         if (useMutation)
+         {
+            std::cout << "Процент мутаций (%): ";
+            std::cin >> percent;
+         }
+
+         break;
+
+      case 9: // Очистить консоль
+
+         system("cls");
+
+         break;
+
+      case 0: // Выход
+
+         std::cout << "Выход из программы..." << std::endl;
+         running = false;
+         break;
+
+      default:
+
+         std::cout << "Неверный выбор. Попробуйте снова." << std::endl;
+         break;
+      }
+
+      std::cout << std::endl;
    }
 }
 // ============================== End main ==============================

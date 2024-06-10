@@ -10,6 +10,7 @@ public:
    CRandom(int start = 0, int end = RAND_MAX);
 
    int Generate();
+   int Generate(int start, int end);
    void SetBoundaries(int start, int end);
 
    // Позволяет при каждом новом запуске программы использовать новые числа
@@ -37,6 +38,11 @@ inline CRandom::CRandom(int start, int end) : m_start(start), m_end(end)
 inline int CRandom::Generate()
 {
    return rand() % (m_end - m_start + 1) + m_start;
+}
+
+inline int CRandom::Generate(int start, int end)
+{
+   return rand() % (end - start + 1) + start;
 }
 
 
