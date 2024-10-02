@@ -7,11 +7,3 @@ b -> a, c, d, e
 a, b, e -> c, d, f
 a -> c, d
 b, e -> f
-
-#Предлагается с мутацией
-#a, c, e -> b, d
-#d, f -> a, b, e
-#b -> a, c, d, e
-#a, b, e, f -> c, d
-#a, f -> c, d
-#b, c, e -> f

@@ -11,7 +11,7 @@ bool CGeneticAlgorithm::AddVariable(const SPropVar& Variable_)
    if (!m_vVariables.empty())
       throw std::string("Невозможно добавить переменную, после добавления условия(ий).");
 
-   return m_mapVariables.insert(std::make_pair(Variable_, static_cast<size_t>(0))).second;
+   return m_mapVariables.emplace(Variable_, static_cast<size_t>(0)).second;
 }
 
 size_t CGeneticAlgorithm::AddCondition()
@@ -724,7 +724,7 @@ void CGeneticAlgorithm::Selection(const std::vector<TСondIntegrity>& Individuals
    std::multimap<double, size_t, std::greater<double>> mapIdx;
 
    for (size_t iIndiv = 0; iIndiv < Individuals_.size(); ++iIndiv)
-      mapIdx.insert(std::make_pair(FitnessFunction(Individuals_[iIndiv]), iIndiv));
+      mapIdx.emplace(FitnessFunction(Individuals_[iIndiv]), iIndiv);
 
    m_vGenerations.clear();
 
@@ -838,7 +838,7 @@ void CGeneticAlgorithm::SortDescendingOrder()
    std::multimap<double, TСondIntegrity, std::greater<double>> mapIdx;
 
    for (const auto& individ : m_vGenerations)
-      mapIdx.insert(std::make_pair(FitnessFunction(individ), individ));
+      mapIdx.emplace(FitnessFunction(individ), individ);
 
    m_vGenerations.clear();
 

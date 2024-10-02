@@ -69,8 +69,11 @@ protected:
 
 
    void CreateFirstGenerationRandom(size_t Count_);
+   // Скрещивание по генам (каждый ген берется у случайного родителя)
    TСondIntegrity CrossingByGenes(const TСondIntegrity& Parent1_, const TСondIntegrity& Parent2_) const;
+   // Скрещивание по ограничениям целостности (каждое ограничение берется у случайного родителя)
    TСondIntegrity CrossingByConds(const TСondIntegrity& Parent1_, const TСondIntegrity& Parent2_) const;
+   // Селекция. Выбираются лучшие (по фитнесс функции) CountSurvivors_ особей из Individuals_, т.е. полная замена, родителей "убиваем"
    void Selection(const std::vector<TСondIntegrity>& Individuals_, size_t CountSurvivors_);
    void Mutation(TСondIntegrity& Individuals_, double Ratio_) const;
 
@@ -83,7 +86,6 @@ private:
    std::map<SPropVar, size_t> m_mapVariables;
    std::vector<SPropVar> m_vVariables;
 
-   /// состояния: firs - левая часть (до импликации), second - правая часть
    TСondIntegrity m_vSpecified; // условие целостности (для финтес ф-ции)
 
    std::vector<TСondIntegrity> m_vGenerations;
